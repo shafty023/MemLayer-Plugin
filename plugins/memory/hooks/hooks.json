@@ -1,0 +1,36 @@
+{
+  "description": "Memory system hooks for automatic context retrieval and logging reminders",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/session-start.sh"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/scripts/user-prompt.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "If the task failed or had errors, remind Claude to: 1) Log the episode with prociq_log_episode (outcome='failure', importance_hint=0.8+), 2) Consider running /memory:reflect to analyze what went wrong and extract learnings for next time."
+          }
+        ]
+      }
+    ]
+  }
+}

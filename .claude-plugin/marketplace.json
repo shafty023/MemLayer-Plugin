@@ -1,0 +1,21 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "ProcIQ",
+  "description": "Self-learning memory system for Claude Code - learn from past experiences",
+  "owner": {
+    "name": "ProcIQ"
+  },
+  "plugins": [
+    {
+      "name": "memory",
+      "description": "Persistent memory that learns from past experiences. Logs task executions, extracts patterns from failures, and promotes proven strategies to skills.",
+      "version": "0.1.0",
+      "author": {
+        "name": "ProcIQ"
+      },
+      "source": "./plugins/memory",
+      "category": "productivity",
+      "keywords": ["memory", "learning", "patterns", "episodes"]
+    }
+  ]
+}
