@@ -1,6 +1,7 @@
 # MemLayer Plugin
 
 A self-learning memory system plugin for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) that enables persistent learning across task executions.
+Must be used with [prociq.ai](MemLayer).
 
 ## Overview
 
