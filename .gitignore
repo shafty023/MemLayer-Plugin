@@ -1,0 +1,15 @@
+.gemini
+.vscode
+.idea
+.DS_Store
+*.log
+*.tmp
+node_modules/
+dist/
+coverage/
+.env
+*.env
+*.local
+*.bak
+*.backup
+*.swp

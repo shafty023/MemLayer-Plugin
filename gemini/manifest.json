@@ -1,0 +1,16 @@
+{
+  "name": "ProcIQ Memory Layer",
+  "version": "0.1.0",
+  "description": "Self-learning memory system for Gemini. Automatically retrieves relevant past experiences and logs new learnings.",
+  "author": "Stephen Turner",
+  "skills": [
+    {
+      "name": "memory-usage",
+      "path": "skills/memory-usage/SKILL.md",
+      "description": "Orchestrates the Retrieve-Act-Log cycle for persistent agent learning."
+    }
+  ],
+  "requirements": {
+    "mcpServers": ["prociq"]
+  }
+}

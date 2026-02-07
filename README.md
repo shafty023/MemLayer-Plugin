@@ -1,11 +1,11 @@
-# MemLayer Plugin
+# MemLayer Plugins
 
-A self-learning memory system plugin for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) that enables persistent learning across task executions.
+A self-learning memory system for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) and the [Gemini CLI](https://github.com/google/gemini-cli) that enables persistent learning across task executions.
 Must be used with [MemLayer](https://prociq.ai).
 
 ## Overview
 
-MemLayer provides Claude Code with episodic memory capabilities, allowing it to:
+MemLayer provides your AI agents with episodic memory capabilities, allowing them to:
 
 - **Log task executions** as episodes with outcomes, errors, and context
 - **Extract patterns** from past experiences, especially failures
@@ -14,6 +14,8 @@ MemLayer provides Claude Code with episodic memory capabilities, allowing it to:
 - **Learn from mistakes** to avoid repeating them
 
 ## Installation
+
+### Claude Code
 
 1. Add the marketplace to Claude Code:
    ```
@@ -29,14 +31,21 @@ MemLayer provides Claude Code with episodic memory capabilities, allowing it to:
 
 For more details on plugin installation, see the [official documentation](https://code.claude.com/docs/en/plugin-marketplaces).
 
+### Gemini CLI
+
+See the [Gemini Plugin Documentation](gemini/README.md) for installation and setup instructions.
+
 ## Project Structure
 
 ```
 MemLayer-Plugin/
-├── .claude-plugin/
-│   └── marketplace.json      # Marketplace registration
+├── .claude-plugin/           # Claude marketplace registration
+├── gemini/                   # Gemini CLI plugin
+│   ├── manifest.json
+│   ├── setup.sh
+│   └── skills/
 └── plugins/
-    └── memory/
+    └── memory/               # Claude Code plugin
         ├── .claude-plugin/
         │   └── plugin.json   # Plugin manifest
         ├── commands/         # CLI commands
@@ -182,3 +191,4 @@ Daniel Ochoa ([@shafty023](https://github.com/shafty023))
 
 - [prociq.ai](https://prociq.ai) — Memory system backend
 - [Claude Code Documentation](https://docs.anthropic.com/en/docs/claude-code)
+- [Gemini CLI Documentation](https://github.com/google/gemini-cli)
