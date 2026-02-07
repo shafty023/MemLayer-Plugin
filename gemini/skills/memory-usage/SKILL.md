@@ -1,3 +1,8 @@
+---
+name: memory-usage
+description: Self-learning memory system. Orchestrates the Retrieve -> Act -> Log cycle to ensure persistent learning across sessions. Use this skill at the beginning of tasks to retrieve context and at the end to log outcomes.
+---
+
 # memory-usage
 
 Self-learning memory system. Orchestrates the **Retrieve → Act → Log** cycle to ensure persistent learning across sessions.

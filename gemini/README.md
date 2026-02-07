@@ -10,17 +10,17 @@ A self-learning memory layer for the Gemini CLI. This plugin enables Gemini to a
 
 ## Installation
 
-### 1. Link Plugin Skills
-Run the provided setup script to symlink the plugin's skills into your local Gemini configuration:
+### 1. Install Plugin Skills
+Run the provided setup script from your project's root directory to install the plugin's skills into your workspace:
 
 ```bash
-./gemini/setup.sh
+/path/to/MemLayer-Plugin/gemini/setup.sh
 ```
 
-This will link the `memory-usage` skill to your global Gemini skills directory (typically `~/.gemini/skills/memory-usage`).
+This will install the `memory-usage` skill to your local workspace scope (`.gemini/skills/memory-usage`). Installing to the workspace is the recommended way to bypass Gemini CLI sandboxing restrictions that might prevent access to global skills.
 
 ### 2. Configure MCP Server
-The plugin requires the `prociq` MCP server to be configured in your Gemini settings. Add the following to your `~/.gemini/settings.json` (or your project-local `.gemini/settings.json`):
+The plugin requires the `prociq` MCP server to be configured. Add the following to your project-local `.gemini/settings.json` (creating it if it doesn't exist):
 
 ```json
 {
