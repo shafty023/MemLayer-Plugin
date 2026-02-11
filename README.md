@@ -1,6 +1,6 @@
 # MemLayer Plugins
 
-A self-learning memory system for [Claude Code](https://docs.anthropic.com/en/docs/claude-code) and the [Gemini CLI](https://github.com/google/gemini-cli) that enables persistent learning across task executions.
+A self-learning memory system for [Claude Code](https://docs.anthropic.com/en/docs/claude-code), the [Gemini CLI](https://github.com/google/gemini-cli), and [Codex CLI](https://github.com/openai/codex) that enables persistent learning across task executions.
 Must be used with [MemLayer](https://prociq.ai).
 
 ## Overview
@@ -35,11 +35,18 @@ For more details on plugin installation, see the [official documentation](https:
 
 See the [Gemini Plugin Documentation](gemini/README.md) for installation and setup instructions.
 
+### Codex CLI
+
+See the [Codex Plugin Documentation](codex/README.md) for installation and setup instructions.
+
 ## Project Structure
 
 ```
 MemLayer-Plugin/
 ├── .claude-plugin/           # Claude marketplace registration
+├── codex/                    # Codex CLI plugin
+│   ├── setup.sh
+│   └── skills/
 ├── gemini/                   # Gemini CLI plugin
 │   ├── manifest.json
 │   ├── setup.sh
@@ -192,3 +199,4 @@ Daniel Ochoa ([@shafty023](https://github.com/shafty023))
 - [prociq.ai](https://prociq.ai) — Memory system backend
 - [Claude Code Documentation](https://docs.anthropic.com/en/docs/claude-code)
 - [Gemini CLI Documentation](https://github.com/google/gemini-cli)
+- [Codex CLI Documentation](https://github.com/openai/codex)
