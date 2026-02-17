@@ -29,7 +29,31 @@ else
     echo "✓ Skill copied to ${TARGET_DIR}"
 fi
 
+echo "Configuring .gemini/settings.json..."
+SETTINGS_FILE="./.gemini/settings.json"
+SYSTEM_PROMPT_FILE="${PLUGIN_DIR}/prompts/system.md"
+
+if [ -f "${SYSTEM_PROMPT_FILE}" ]; then
+    SYSTEM_PROMPT=$(cat "${SYSTEM_PROMPT_FILE}")
+    
+    if [ ! -f "${SETTINGS_FILE}" ]; then
+        mkdir -p "$(dirname "${SETTINGS_FILE}")"
+        echo '{"mcpServers": {}}' > "${SETTINGS_FILE}"
+    fi
+    
+    if command -v jq >/dev/null 2>&1; then
+        # Use jq to safely update the JSON file
+        TMP_SETTINGS=$(mktemp)
+        jq --arg prompt "${SYSTEM_PROMPT}" '.systemPrompt = $prompt' "${SETTINGS_FILE}" > "${TMP_SETTINGS}"
+        mv "${TMP_SETTINGS}" "${SETTINGS_FILE}"
+        echo "✓ systemPrompt updated in ${SETTINGS_FILE}"
+    else
+        echo "Warning: jq not found. Could not automatically update ${SETTINGS_FILE}."
+        echo "Please manually add the contents of ${SYSTEM_PROMPT_FILE} to the 'systemPrompt' field in ${SETTINGS_FILE}."
+    fi
+fi
+
 echo ""
 echo "Next steps:"
-echo "1. Ensure the ProcIQ MCP server is configured in your local .gemini/settings.json"
+echo "1. Ensure the 'prociq' MCP server is configured in ${SETTINGS_FILE}"
 echo "2. Restart your Gemini CLI session."
