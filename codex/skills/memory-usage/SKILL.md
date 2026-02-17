@@ -1,74 +1,39 @@
 ---
 name: memory-usage
-description: ProcIQ memory workflow for Codex. Use when starting non-trivial tasks, debugging errors, auditing memory, teaching lessons, or forgetting episodes.
+description: Self-learning memory system. Orchestrates the Retrieve -> Act -> Log cycle to ensure persistent learning across sessions. Use this skill at the beginning of tasks to retrieve context and at the end to log outcomes. Triggers on starting non-trivial tasks, debugging errors, auditing memory, or storing static knowledge.
 ---
 
 # memory-usage
 
-Use ProcIQ in a Retrieve -> Act -> Log cycle.
+Self-learning memory system. Orchestrates the **Retrieve → Act → Log** cycle to ensure persistent learning across sessions.
 
 ## Core Workflow
 
-### 1. Retrieve Context First
+### 1. Mandatory Context Retrieval
+Before starting any significant task (coding, debugging, architecture design), you **MUST** check for relevant past experiences.
+*   **Action**: Call `prociq_retrieve_context` with a clear description of the current goal.
+*   **Optional Hints**: Provide `project`, `tools`, or `file_patterns` to focus the search.
+*   **Goal**: Identify past successes to replicate or failures to avoid.
+*   **Instruction**: If the retrieved context contains "Active Skills" or "Patterns", follow those specific instructions for the duration of the task.
 
-Before significant work (coding, debugging, refactoring, architecture), call:
+### 2. Task Implementation (Action)
+Perform the task as requested, informed by the retrieved context.
+*   If you encounter a new error during implementation, call `prociq_retrieve_context` again with the `task_description` updated to include the error state to find specific solutions.
+*   If you encounter a static fact (e.g., "The API key expires every 24 hours"), call `prociq_log_note` to store it permanently.
 
-- `prociq_retrieve_context` with a concise task description
-- include `error_state` when debugging an active failure
+### 3. Experience Logging (Finalize)
+After the task is complete (even if only partially successful or failed), you **MUST** record the experience.
+*   **Action**: Call `prociq_log_episode`.
+*   **Fields**:
+    *   `task_goal`: Concise statement of what you tried to do.
+    *   `approach_taken`: Summary of the steps or logic used.
+    *   `outcome`: One of `success`, `partial`, or `failure`.
+    *   `project`: (Optional) The project name.
+    *   `importance_hint`: Rate from `0.1` (routine) to `1.0` (critical breakthrough/failure).
+*   **Batching**: If you have multiple related actions to log, use `prociq_log_episodes_batch`.
 
-If the response includes active skills or constraints, follow them during execution.
-
-### 2. Execute the Task
-
-Implement the user request using retrieved context.
-
-If a new error appears during implementation, call `prociq_retrieve_context` again using the latest error message.
-
-### 3. Log the Outcome
-
-At the end of significant work, call `prociq_log_episode` with:
-
-- `task_goal`
-- `approach_taken`
-- `outcome`: `success`, `partial`, or `failure`
-- `error_message`: required for non-success outcomes
-- `tools_used`, `file_patterns`, and `component_types` when known
-- `importance_hint`: `0.2` routine to `1.0` critical
-
-## Failure-First Rule
-
-On any command/test/build/runtime error:
-
-1. Stop and capture the exact failure context
-2. Log failure with `prociq_log_episode` (`outcome="failure"`)
-3. Retry only after the failure is logged
-
-This prevents loss of high-value debugging context.
-
-## Success Logging Policy
-
-Log success episodes when the work is reusable:
-
-- solved a recurring problem class
-- required non-obvious investigation or tradeoffs
-- established a pattern likely to repeat
-- first time performing this workflow in the codebase
-
-Skip success logging for low-signal work:
-
-- trivial typos or missing imports
-- routine CRUD/template updates
-- one-off mechanical operations with no reusable insight
-
-## Intent Helpers
-
-When the user asks to audit memory, run:
-
-1. `prociq_get_memory_stats`
-2. `prociq_search_episodes` for recent activity
-3. `prociq_search_patterns` with confidence filtering
-4. `prociq_list_skills`
-
-When the user asks to teach a lesson, create a high-importance episode (`importance_hint >= 0.8`) summarizing the lesson and why it matters.
-
-When the user asks to forget episodes, always confirm targets before calling `prociq_forget_episodes`.
+## Guidelines
+*   **Failure is Signal**: Always log failures. They are the most valuable entries for future error prevention. **Failure-First Rule**: Stop, capture context, log failure, then retry.
+*   **Static Knowledge**: Use `prociq_log_note` for facts and knowledge that aren't tied to a specific action outcome.
+*   **Audit Memory**: When asked to audit memory, use `prociq_get_memory_stats`, `prociq_search_episodes`, and `prociq_search_patterns` to provide a comprehensive report.
+*   **Stand-alone Content**: When logging, ensure the `approach_taken` is descriptive enough to be understood in a future session without the original conversation context.
