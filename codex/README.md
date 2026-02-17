@@ -16,7 +16,7 @@ Run the setup script from your project root:
 /path/to/MemLayer-Plugin/codex/setup.sh
 ```
 
-This installs the `memory-usage` skill into `$CODEX_HOME/skills` (or `~/.codex/skills` if `CODEX_HOME` is not set).
+This installs the `memory-usage` skill into `.codex/skills` in the current project directory.
 
 ### Install AGENTS.md in a Target Project
 
@@ -30,7 +30,7 @@ If the target already has an `AGENTS.md`, rerun with `--force` as the second arg
 
 ## Configure ProcIQ MCP
 
-Add a ProcIQ MCP server entry to `~/.codex/config.toml`:
+Add a ProcIQ MCP server entry to `.codex/config.toml` in your project:
 
 ```toml
 [mcp_servers.prociq]
