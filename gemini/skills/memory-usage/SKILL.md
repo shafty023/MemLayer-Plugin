@@ -1,23 +1,25 @@
 ---
 name: memory-usage
-description: Self-learning memory system. Orchestrates the Retrieve -> Act -> Log cycle to ensure persistent learning across sessions. Use this skill at the beginning of tasks to retrieve context and at the end to log outcomes.
+description: Self-learning memory system. Orchestrates the Retrieve -> Act -> Log cycle to ensure persistent learning across sessions. Use this skill at the beginning of tasks to retrieve context and at the end to log outcomes. Triggers on starting non-trivial tasks, debugging errors, auditing memory, or storing static knowledge.
 ---
 
 # memory-usage
 
 Self-learning memory system. Orchestrates the **Retrieve → Act → Log** cycle to ensure persistent learning across sessions.
 
-## Procedure
+## Core Workflow
 
 ### 1. Mandatory Context Retrieval
 Before starting any significant task (coding, debugging, architecture design), you **MUST** check for relevant past experiences.
 *   **Action**: Call `prociq_retrieve_context` with a clear description of the current goal.
+*   **Optional Hints**: Provide `project`, `tools`, or `file_patterns` to focus the search.
 *   **Goal**: Identify past successes to replicate or failures to avoid.
-*   **Instruction**: If the retrieved context contains "Active Skills", you must follow those specific instructions for the duration of the task.
+*   **Instruction**: If the retrieved context contains "Active Skills" or "Patterns", follow those specific instructions for the duration of the task.
 
 ### 2. Task Implementation (Action)
 Perform the task as requested, informed by the retrieved context.
-*   If you encounter a new error during implementation, call `prociq_retrieve_context` again with the `error_state` field populated to find specific solutions.
+*   If you encounter a new error during implementation, call `prociq_retrieve_context` again with the `task_description` updated to include the error state to find specific solutions.
+*   If you encounter a static fact (e.g., "The API key expires every 24 hours"), call `prociq_log_note` to store it permanently.
 
 ### 3. Experience Logging (Finalize)
 After the task is complete (even if only partially successful or failed), you **MUST** record the experience.
@@ -26,9 +28,12 @@ After the task is complete (even if only partially successful or failed), you **
     *   `task_goal`: Concise statement of what you tried to do.
     *   `approach_taken`: Summary of the steps or logic used.
     *   `outcome`: One of `success`, `partial`, or `failure`.
-    *   `error_message`: Include the full error if the outcome was not `success`.
+    *   `project`: (Optional) The project name.
     *   `importance_hint`: Rate from `0.1` (routine) to `1.0` (critical breakthrough/failure).
+*   **Batching**: If you have multiple related actions to log, use `prociq_log_episodes_batch`.
 
 ## Guidelines
-*   **Failure is Signal**: Always log failures. They are the most valuable entries for future error prevention.
+*   **Failure is Signal**: Always log failures. They are the most valuable entries for future error prevention. **Failure-First Rule**: Stop, capture context, log failure, then retry.
+*   **Static Knowledge**: Use `prociq_log_note` for facts and knowledge that aren't tied to a specific action outcome.
+*   **Audit Memory**: When asked to audit memory, use `prociq_get_memory_stats`, `prociq_search_episodes`, and `prociq_search_patterns` to provide a comprehensive report.
 *   **Stand-alone Content**: When logging, ensure the `approach_taken` is descriptive enough to be understood in a future session without the original conversation context.

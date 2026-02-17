@@ -6,7 +6,7 @@ A self-learning memory layer for the Gemini CLI. This plugin enables Gemini to a
 
 1.  **Gemini CLI** installed and configured.
 2.  **ProcIQ Core** dependencies installed in a Python virtual environment (Python 3.11+).
-3.  **MCP Server** access (Local or Supabase-backed).
+3.  **MCP Server** access (Local).
 
 ## Installation
 
@@ -47,8 +47,6 @@ The following environment variables are supported in the `env` block of your con
 
 *   `PROCIQ_ORG_ID`: (Required) An identifier to isolate your memory data.
 *   `MCP_TRANSPORT`: Set to `stdio` for local child-process execution.
-*   `STORAGE_BACKEND`: Set to `chromadb` (local) or `supabase` (cloud).
-*   `SUPABASE_URL` / `SUPABASE_SERVICE_KEY`: Required if using the Supabase backend.
 
 ## Usage
 
