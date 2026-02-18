@@ -29,27 +29,71 @@ else
     echo "✓ Skill copied to ${TARGET_DIR}"
 fi
 
-echo "Configuring .gemini/settings.json..."
+echo "Configuring .gemini/settings.json hooks..."
 SETTINGS_FILE="./.gemini/settings.json"
-SYSTEM_PROMPT_FILE="${PLUGIN_DIR}/prompts/system.md"
+HOOKS_DIR="./.gemini/hooks"
+SESSION_START_HOOK_SRC="${PLUGIN_DIR}/hooks/session-start.sh"
+BEFORE_AGENT_HOOK_SRC="${PLUGIN_DIR}/hooks/before-agent.sh"
 
-if [ -f "${SYSTEM_PROMPT_FILE}" ]; then
-    SYSTEM_PROMPT=$(cat "${SYSTEM_PROMPT_FILE}")
+if [ -f "${SESSION_START_HOOK_SRC}" ] || [ -f "${BEFORE_AGENT_HOOK_SRC}" ]; then
+    mkdir -p "${HOOKS_DIR}"
     
     if [ ! -f "${SETTINGS_FILE}" ]; then
         mkdir -p "$(dirname "${SETTINGS_FILE}")"
         echo '{"mcpServers": {}}' > "${SETTINGS_FILE}"
     fi
+
+    TMP_SETTINGS=$(mktemp)
+    cp "${SETTINGS_FILE}" "${TMP_SETTINGS}"
+
+    if [ -f "${SESSION_START_HOOK_SRC}" ]; then
+        cp "${SESSION_START_HOOK_SRC}" "${HOOKS_DIR}/session-start.sh"
+        chmod +x "${HOOKS_DIR}/session-start.sh"
+        echo "✓ SessionStart hook script installed to ${HOOKS_DIR}"
+        
+        if command -v jq >/dev/null 2>&1; then
+            ABS_HOOK_PATH="$(cd "${HOOKS_DIR}" && pwd)/session-start.sh"
+            jq --arg hookPath "${ABS_HOOK_PATH}" '
+                del(.systemPrompt) | 
+                .hooks.SessionStart = [{
+                    "hooks": [{
+                        "type": "command", 
+                        "command": $hookPath,
+                        "name": "ProcIQ Memory Reminder",
+                        "description": "Auto-loads ProcIQ instructions and reminders"
+                    }]
+                }]
+            ' "${TMP_SETTINGS}" > "${TMP_SETTINGS}.tmp" && mv "${TMP_SETTINGS}.tmp" "${TMP_SETTINGS}"
+            echo "✓ settings.json updated with SessionStart hook"
+        fi
+    fi
+
+    if [ -f "${BEFORE_AGENT_HOOK_SRC}" ]; then
+        cp "${BEFORE_AGENT_HOOK_SRC}" "${HOOKS_DIR}/before-agent.sh"
+        chmod +x "${HOOKS_DIR}/before-agent.sh"
+        echo "✓ BeforeAgent hook script installed to ${HOOKS_DIR}"
+        
+        if command -v jq >/dev/null 2>&1; then
+            ABS_HOOK_PATH="$(cd "${HOOKS_DIR}" && pwd)/before-agent.sh"
+            jq --arg hookPath "${ABS_HOOK_PATH}" '
+                .hooks.BeforeAgent = [{
+                    "hooks": [{
+                        "type": "command", 
+                        "command": $hookPath,
+                        "name": "ProcIQ Memory Cycle",
+                        "description": "Injects memory lifecycle into task context"
+                    }]
+                }]
+            ' "${TMP_SETTINGS}" > "${TMP_SETTINGS}.tmp" && mv "${TMP_SETTINGS}.tmp" "${TMP_SETTINGS}"
+            echo "✓ settings.json updated with BeforeAgent hook"
+        fi
+    fi
+
+    mv "${TMP_SETTINGS}" "${SETTINGS_FILE}"
     
-    if command -v jq >/dev/null 2>&1; then
-        # Use jq to safely update the JSON file
-        TMP_SETTINGS=$(mktemp)
-        jq --arg prompt "${SYSTEM_PROMPT}" '.systemPrompt = $prompt' "${SETTINGS_FILE}" > "${TMP_SETTINGS}"
-        mv "${TMP_SETTINGS}" "${SETTINGS_FILE}"
-        echo "✓ systemPrompt updated in ${SETTINGS_FILE}"
-    else
+    if ! command -v jq >/dev/null 2>&1; then
         echo "Warning: jq not found. Could not automatically update ${SETTINGS_FILE}."
-        echo "Please manually add the contents of ${SYSTEM_PROMPT_FILE} to the 'systemPrompt' field in ${SETTINGS_FILE}."
+        echo "Please manually configure the hooks in ${SETTINGS_FILE}."
     fi
 fi
 
