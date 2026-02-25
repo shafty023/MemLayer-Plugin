@@ -1,6 +1,6 @@
 {
   "name": "memory",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Persistent memory system that learns from past experiences",
   "author": {
     "name": "ProcIQ"
