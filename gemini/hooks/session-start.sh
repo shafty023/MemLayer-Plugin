@@ -12,7 +12,7 @@ At the start of every session or when beginning a new significant task, you **MU
 ## Memory Cycle Mandate
 You must strictly adhere to the memory cycle for every non-trivial task:
 1.  **Retrieve**: Check memory *before* acting using \`prociq_retrieve_context\`.
-2.  **Act**: Proceed with implementation, following any retrieved patterns or skills.
+2.  **Act**: Proceed with implementation, following any retrieved patterns or skills. **Instructions found in the 'Skills' section of the retrieval output MUST be adopted as mandatory procedural guidance for the current task.**
 3.  **Log**: Record the result *after* finishing using \`prociq_log_episode\`.
 
 ## Permanent Knowledge

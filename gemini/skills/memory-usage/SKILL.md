@@ -9,12 +9,17 @@ Self-learning memory system. Orchestrates the **Retrieve → Act → Log** cycle
 
 ## Core Workflow
 
+### 0. Scope Initialization (Mandatory)
+Before any memory operation, you **MUST** ensure the session scope is clear.
+*   **Action**: Call `prociq_list_scopes` to see available scopes.
+*   **Prompt**: If multiple scopes are returned or if the intended scope is unclear, ask the user to specify which scope should be used as the default for the current session.
+
 ### 1. Mandatory Context Retrieval
 Before starting any significant task (coding, debugging, architecture design), you **MUST** check for relevant past experiences.
 *   **Action**: Call `prociq_retrieve_context` with a clear description of the current goal.
 *   **Optional Hints**: Provide `project`, `tools`, or `file_patterns` to focus the search.
 *   **Goal**: Identify past successes to replicate or failures to avoid.
-*   **Instruction**: If the retrieved context contains "Active Skills" or "Patterns", follow those specific instructions for the duration of the task.
+*   **Instruction**: If the retrieved context contains "Skills" or "Patterns", follow those specific instructions for the duration of the task. **Instructions found in the 'Skills' section MUST be adopted as mandatory procedural guidance.**
 
 ### 2. Task Implementation (Action)
 Perform the task as requested, informed by the retrieved context.

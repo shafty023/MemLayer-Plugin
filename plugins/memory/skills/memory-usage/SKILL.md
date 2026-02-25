@@ -10,11 +10,18 @@ Guide for using the self-learning memory system effectively.
 
 | Tool | When to Use |
 |------|-------------|
+| `prociq_list_scopes` | Before the first memory operation to initialize scope |
 | `prociq_retrieve_context` | Before starting any non-trivial task |
 | `prociq_log_episode` | After completing or failing a task |
 | `prociq_search_episodes` | When looking for specific past experiences |
 | `prociq_get_memory_stats` | To check system health |
 | `prociq_trigger_consolidation` | To process accumulated episodes into patterns |
+
+## Scopes and Authorization (Mandatory Initialization)
+
+Before the first memory operation in a session, you **MUST** ensure the scope is clear:
+1. Call `prociq_list_scopes` to see authorized scopes.
+2. **PROMPT**: If multiple scopes exist or if the intended scope is unclear, ask the user to specify which scope should be used as the default for the current session.
 
 ## Logging Episodes
 
@@ -26,6 +33,7 @@ prociq_log_episode(
     approach_taken="How you approached it and what worked/failed",
     outcome="success" | "partial" | "failure",
     error_message="Details if failed",
+    scope="your-session-scope",  # Ensure this matches your initialized scope
     tools_used=["Read", "Edit", "Bash"],
     file_patterns=["*.py", "src/**/*.ts"],
     component_types=["api", "database", "ui"],
@@ -57,7 +65,9 @@ prociq_retrieve_context(
 The system returns:
 - **Episodes**: Past experiences with similar tasks
 - **Patterns**: Derived strategies from multiple experiences
-- **Suggested skills**: Related skills to consider
+- **Skills**: Dynamic procedural guidance
+
+**CRITICAL**: You MUST adopt instructions found in the 'Skills' section of the retrieval output as mandatory procedural guidance for the current task.
 
 ## Reflection and Patterns
 

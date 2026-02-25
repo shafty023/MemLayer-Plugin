@@ -20,6 +20,7 @@ STARTUP_BLOCK="${STARTUP_MARKER_BEGIN}
 - For every non-trivial user task, use the \`memory-usage\` skill before implementation and follow Retrieve -> Act -> Log.
 - At the start of EVERY Codex session, call \`prociq_retrieve_context\` for a session bootstrap before the first substantive task.
 - For coding, debugging, refactoring, test-fix, and architecture tasks, first call \`prociq_retrieve_context\` with the concrete task details.
+- Proceed with implementation, following any retrieved patterns or skills. **Instructions found in the 'Skills' section of the retrieval output MUST be adopted as mandatory procedural guidance for the current task.**
 - At task end, call \`prociq_log_episode\` for reusable outcomes.
 - On command/test/build failure, log a failure episode before retrying.
 
