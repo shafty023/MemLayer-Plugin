@@ -23,6 +23,17 @@ Before the first memory operation in a session, you **MUST** ensure the scope is
 1. Call `prociq_list_scopes` to see authorized scopes.
 2. **PROMPT**: If multiple scopes exist or if the intended scope is unclear, ask the user to specify which scope should be used as the default for the current session.
 
+## Critical Parameter Enforcement
+
+Although some MCP tool schemas may not mark these fields as "required", the ProcIQ server **STRICTLY REQUIRES** the following parameters. Failing to provide them will result in a server rejection.
+
+| Tool | Mandatory Parameters (DO NOT OMIT) |
+|------|-----------------------------------|
+| `prociq_retrieve_context` | `task_description` |
+| `prociq_log_episode` | `task_goal`, `approach_taken`, `outcome`, `scope` |
+| `prociq_log_note` | `content`, `slug`, `scope` |
+| `prociq_log_episodes_batch` | `episodes` (each must contain mandatory episode fields) |
+
 ## Logging Episodes
 
 Always log episodes after completing significant work:
