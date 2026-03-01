@@ -20,8 +20,12 @@ Before starting any significant task (coding, debugging, architecture design), y
 ### 1.5 Scope Resolution (Immediately After First Retrieval)
 After the first `prociq_retrieve_context` call in a task/session:
 *   **Action**: Call `prociq_list_scopes` to discover authorized scopes.
-*   If exactly one scope is available, use it as the default scope for this task.
-*   If more than one scope is available, ask the user to choose the default scope before any scoped operations (`prociq_log_episode`, `prociq_log_note`, `prociq_log_episodes_batch`, etc.).
+*   **Context-First Rule**: Before asking the user, check whether current context already specifies a preferred scope (for example: user instruction in this thread, AGENTS/session policy, or a previously confirmed scope for this session).
+*   If exactly one authorized scope is available, use it as the default scope for this task/session.
+*   If multiple scopes are available and context provides a single unambiguous scope, use it as the default scope for this task/session.
+*   If multiple scopes are available and context is missing or ambiguous, ask the user to choose the default scope **once**.
+*   **Session Stickiness Rule**: After scope is resolved, reuse the same default scope for the rest of the session unless the user explicitly changes it.
+*   Before any scoped operations (`prociq_log_episode`, `prociq_log_note`, `prociq_log_episodes_batch`, etc.), ensure default scope is resolved.
 *   If a memory call fails with a scope-related error, stop and resolve default scope selection before retrying.
 
 ### 2. Task Implementation (Action)
