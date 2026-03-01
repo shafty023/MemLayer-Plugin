@@ -17,11 +17,12 @@ STARTUP_BLOCK="${STARTUP_MARKER_BEGIN}
 
 ## MemLayer Startup Enforcement
 
-- For every non-trivial user task, use the \`memory-usage\` skill before implementation and follow Retrieve -> Act -> Log.
+- For every non-trivial user task, use the \`memory-usage\` skill before implementation and follow its Retrieve -> Act -> Log workflow.
 - At the start of EVERY Codex session, call \`prociq_retrieve_context\` for a session bootstrap before the first substantive task.
 - For coding, debugging, refactoring, test-fix, and architecture tasks, first call \`prociq_retrieve_context\` with the concrete task details.
-- Proceed with implementation, following any retrieved patterns or skills. **Instructions found in the 'Skills' section of the retrieval output MUST be adopted as mandatory procedural guidance for the current task.**
-- At task end, call \`prociq_log_episode\` for reusable outcomes.
+- Immediately after first retrieval, call \`prociq_list_scopes\` to resolve default scope.
+- If more than one scope is authorized, ask the user to choose the default scope before any scoped memory write or logging operation.
+- At task end, call \`prociq_log_episode\` with outcome and approach details.
 - On command/test/build failure, log a failure episode before retrying.
 
 ${STARTUP_MARKER_END}"

@@ -1,103 +1,48 @@
 ---
-description: This skill should be used when working with the prociq memory system, logging episodes, retrieving context, or managing patterns and skills. Triggers include debugging errors, starting complex tasks, or when the user asks about past experiences.
+name: memory-usage
+description: Self-learning memory system. Orchestrates the Retrieve -> Act -> Log cycle to ensure persistent learning across sessions. Use this skill at the beginning of tasks to retrieve context and at the end to log outcomes. Triggers on starting non-trivial tasks, debugging errors, auditing memory, or storing static knowledge.
 ---
 
-# ProcIQ Memory System Usage
+# memory-usage
 
-Guide for using the self-learning memory system effectively.
+Self-learning memory system. Orchestrates the **Retrieve -> Act -> Log** cycle to ensure persistent learning across sessions.
 
-## Core Tools
+## Core Workflow
 
-| Tool | When to Use |
-|------|-------------|
-| `prociq_list_scopes` | Before the first memory operation to initialize scope |
-| `prociq_retrieve_context` | Before starting any non-trivial task |
-| `prociq_log_episode` | After completing or failing a task |
-| `prociq_search_episodes` | When looking for specific past experiences |
-| `prociq_get_memory_stats` | To check system health |
-| `prociq_trigger_consolidation` | To process accumulated episodes into patterns |
+### 1. Mandatory Context Retrieval
+Before starting any significant task (coding, debugging, architecture design), you **MUST** check for relevant past experiences.
+*   **Action**: Call `prociq_retrieve_context` with a clear description of the current goal.
+*   **Optional Hints**: Provide `error_state`, `tools`, `file_patterns`, or `limit` to focus the search.
+*   **Goal**: Identify past successes to replicate or failures to avoid.
+*   **Instruction**: If the retrieved context contains "Skills" or "Patterns", follow those specific instructions for the duration of the task.
+*   **Ordering Rule**: If AGENTS/session policy requires `prociq_retrieve_context` as the first non-trivial action, do not call `prociq_list_scopes` before this first retrieval.
 
-## Scopes and Authorization (Mandatory Initialization)
+### 1.5 Scope Resolution (Immediately After First Retrieval)
+After the first `prociq_retrieve_context` call in a task/session:
+*   **Action**: Call `prociq_list_scopes` to discover authorized scopes.
+*   If exactly one scope is available, use it as the default scope for this task.
+*   If more than one scope is available, ask the user to choose the default scope before any scoped operations (`prociq_log_episode`, `prociq_log_note`, `prociq_log_episodes_batch`, etc.).
+*   If a memory call fails with a scope-related error, stop and resolve default scope selection before retrying.
 
-Before the first memory operation in a session, you **MUST** ensure the scope is clear:
-1. Call `prociq_list_scopes` to see authorized scopes.
-2. **PROMPT**: If multiple scopes exist or if the intended scope is unclear, ask the user to specify which scope should be used as the default for the current session.
+### 2. Task Implementation (Action)
+Perform the task as requested, informed by the retrieved context.
+*   If you encounter a new error during implementation, call `prociq_retrieve_context` again with `error_state` populated (and an updated `task_description`) to find specific solutions.
+*   If you encounter a static fact (e.g., "The API key expires every 24 hours"), call `prociq_log_note` with the resolved default scope to store it permanently.
 
-## Critical Parameter Enforcement
+### 3. Experience Logging (Finalize)
+After the task is complete (even if only partially successful or failed), you **MUST** record the experience.
+*   **Action**: Call `prociq_log_episode`.
+*   **Fields**:
+    *   `task_goal`: Concise statement of what you tried to do.
+    *   `approach_taken`: Summary of the steps or logic used.
+    *   `outcome`: One of `success`, `partial`, or `failure`.
+    *   `scope`: The resolved default memory scope used for this task.
+*   **Important**: Do not include unsupported fields like `project` or `importance_hint` in `prociq_log_episode`.
+*   **Importance Model**: Importance is computed by the ProcIQ system and cannot be directly set via MCP parameters.
+*   **Batching**: If you have multiple related actions to log, use `prociq_log_episodes_batch`.
 
-Although some MCP tool schemas may not mark these fields as "required", the ProcIQ server **STRICTLY REQUIRES** the following parameters. Failing to provide them will result in a server rejection.
-
-| Tool | Mandatory Parameters (DO NOT OMIT) |
-|------|-----------------------------------|
-| `prociq_retrieve_context` | `task_description` |
-| `prociq_log_episode` | `task_goal`, `approach_taken`, `outcome`, `scope` |
-| `prociq_log_note` | `content`, `slug`, `scope` |
-| `prociq_log_episodes_batch` | `episodes` (each must contain mandatory episode fields) |
-
-## Logging Episodes
-
-Always log episodes after completing significant work:
-
-```python
-prociq_log_episode(
-    task_goal="What you were trying to accomplish",
-    approach_taken="How you approached it and what worked/failed",
-    outcome="success" | "partial" | "failure",
-    error_message="Details if failed",
-    scope="your-session-scope",  # Ensure this matches your initialized scope
-    tools_used=["Read", "Edit", "Bash"],
-    file_patterns=["*.py", "src/**/*.ts"],
-    component_types=["api", "database", "ui"],
-    importance_hint=0.8  # Higher for important discoveries
-)
-```
-
-### Importance Hints
-
-| Situation | Hint Value |
-|-----------|------------|
-| Normal success | 0.2-0.3 |
-| First-time task type | 0.5-0.6 |
-| Learned something new | 0.7-0.8 |
-| Critical discovery/failure | 0.9-1.0 |
-
-## Retrieving Context
-
-Before starting complex tasks, retrieve relevant past experiences:
-
-```python
-prociq_retrieve_context(
-    task_description="Specific description of what you're about to do",
-    error_state="Current error message if debugging",
-    tools=["Read", "Edit"]  # Tools you're likely to use
-)
-```
-
-The system returns:
-- **Episodes**: Past experiences with similar tasks
-- **Patterns**: Derived strategies from multiple experiences
-- **Skills**: Dynamic procedural guidance
-
-**CRITICAL**: You MUST adopt instructions found in the 'Skills' section of the retrieval output as mandatory procedural guidance for the current task.
-
-## Reflection and Patterns
-
-For failures, use `/reflect` to analyze and store learnings:
-1. Identifies root cause
-2. Proposes strategy for next time
-3. Stores as pattern candidate
-
-For manual knowledge, use `/teach`:
-- Injects knowledge directly
-- Higher importance than regular episodes
-- Fast-tracks to pattern status
-
-## Consolidation
-
-Run `/consolidate` periodically to:
-- Cluster similar episodes
-- Extract patterns
-- Decay old, low-value episodes
-- Promote patterns to skills
-
-Auto-consolidation triggers every 10 episodes and at session end.
+## Guidelines
+*   **Failure is Signal**: Always log failures. They are the most valuable entries for future error prevention. **Failure-First Rule**: Stop, capture context, log failure, then retry.
+*   **Static Knowledge**: Use `prociq_log_note` for facts and knowledge that are not tied to a specific action outcome.
+*   **Audit Memory**: When asked to audit memory, use `prociq_get_memory_stats`, `prociq_search_episodes`, and `prociq_search_patterns` to provide a comprehensive report.
+*   **Stand-alone Content**: When logging, ensure `approach_taken` is descriptive enough to be understood in a future session without the original conversation context.

@@ -17,8 +17,10 @@
 ## Required Memory Sequence
 
 1. At task start, call `prociq_retrieve_context` with a concise task description.
-2. During debugging, call `prociq_retrieve_context` again with the current `error_state`.
-3. At task end, call `prociq_log_episode` with outcome and approach details.
+2. Immediately after the first retrieval, call `prociq_list_scopes` to resolve default scope.
+3. If multiple scopes are authorized, ask the user which scope should be the default before scoped operations.
+4. During debugging, call `prociq_retrieve_context` again with the current `error_state`.
+5. At task end, call `prociq_log_episode` with outcome and approach details.
 
 ## Failure Rule
 

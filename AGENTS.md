@@ -17,8 +17,10 @@
 ## Required Memory Sequence
 
 1. At task start, call `prociq_retrieve_context` with a concise task description.
-2. During debugging, call `prociq_retrieve_context` again with the current `error_state`.
-3. At task end, call `prociq_log_episode` with outcome and approach details.
+2. Immediately after the first retrieval, call `prociq_list_scopes` to resolve default scope.
+3. If multiple scopes are authorized, ask the user which scope should be the default before scoped operations.
+4. During debugging, call `prociq_retrieve_context` again with the current `error_state`.
+5. At task end, call `prociq_log_episode` with outcome and approach details.
 
 ## Failure Rule
 
@@ -34,14 +36,17 @@
 - If `memory-usage` skill or ProcIQ MCP tools are unavailable, explicitly state that limitation and continue with best-effort execution.
 
 
+
 # >>> MemLayer startup block >>>
 
 ## MemLayer Startup Enforcement
 
-- For every non-trivial user task, use the `memory-usage` skill before implementation and follow Retrieve -> Act -> Log.
+- For every non-trivial user task, use the `memory-usage` skill before implementation and follow its Retrieve -> Act -> Log workflow.
 - At the start of EVERY Codex session, call `prociq_retrieve_context` for a session bootstrap before the first substantive task.
 - For coding, debugging, refactoring, test-fix, and architecture tasks, first call `prociq_retrieve_context` with the concrete task details.
-- At task end, call `prociq_log_episode` for reusable outcomes.
+- Immediately after first retrieval, call `prociq_list_scopes` to resolve default scope.
+- If more than one scope is authorized, ask the user to choose the default scope before any scoped memory write or logging operation.
+- At task end, call `prociq_log_episode` with outcome and approach details.
 - On command/test/build failure, log a failure episode before retrying.
 
 # <<< MemLayer startup block <<<
