@@ -10,7 +10,15 @@ A self-learning memory layer for Codex. This plugin installs a Codex skill that 
 
 ## Installation
 
-Run the setup script from your project root:
+### 1. Install via Codex CLI
+The recommended way to install MemLayer in Codex is using the built-in MCP command, which handles authentication via OAuth:
+
+```bash
+codex mcp add memlayer --url "https://prociq.ai/mcp"
+```
+
+### 2. Install Plugin Skills (Optional)
+To install the `memory-usage` skill for specialized context retrieval and logging logic, run the setup script from your project root:
 
 ```bash
 /path/to/MemLayer-Plugin/codex/setup.sh
@@ -18,7 +26,7 @@ Run the setup script from your project root:
 
 This installs the `memory-usage` skill into `.codex/skills` in the current project directory.
 
-### Install AGENTS.md in a Target Project
+### 3. Install AGENTS.md in a Target Project
 
 `AGENTS.md` is project-local, so install it into each repository where you want memory behavior enforced:
 
@@ -28,21 +36,9 @@ This installs the `memory-usage` skill into `.codex/skills` in the current proje
 
 If the target already has an `AGENTS.md`, rerun with `--force` as the second argument to overwrite.
 
-## Configure ProcIQ MCP
-
-Add a ProcIQ MCP server entry to `.codex/config.toml` in your project:
-
-```toml
-[mcp_servers.prociq]
-url = "http://localhost:8085/mcp"
-bearer_token_env_var = "PROCIQ_TOKEN"
-```
-
-Set `PROCIQ_TOKEN` in your shell environment before launching Codex.
-
 ## Usage
 
-Once installed, Codex can use the `memory-usage` skill to run this cycle:
+Once installed via `codex mcp add`, Codex will automatically handle authentication. You can then use the `memory-usage` skill to run this cycle:
 
 1. Retrieve context with `prociq_retrieve_context`
 2. Implement the requested task
