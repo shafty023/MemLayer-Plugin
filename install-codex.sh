@@ -33,11 +33,7 @@ repo_url="https://github.com/${REPO_SLUG}.git"
 plugin_dir="${tmp_dir}/MemLayer-Plugin"
 
 echo "Cloning ${repo_url}..."
-git clone --depth 1 "${repo_url}" "${plugin_dir}"
-(
-  cd "${plugin_dir}"
-  git checkout "${REPO_REF}"
-)
+git clone --depth 1 --branch "${REPO_REF}" "${repo_url}" "${plugin_dir}"
 
 if [ ! -d "${plugin_dir}/codex" ]; then
   echo "Error: checked out ref '${REPO_REF}' does not contain codex plugin files." >&2
