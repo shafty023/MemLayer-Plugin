@@ -15,6 +15,48 @@ MemLayer provides your AI agents with episodic memory capabilities, allowing the
 
 ## Installation
 
+### Browser Copy/Paste One-Liners
+
+```bash
+# Codex
+curl -fsSL https://raw.githubusercontent.com/shafty023/MemLayer-Plugin/main/install-codex.sh | bash
+# Claude
+curl -fsSL https://raw.githubusercontent.com/shafty023/MemLayer-Plugin/main/install-claude.sh | bash
+# Gemini
+curl -fsSL https://raw.githubusercontent.com/shafty023/MemLayer-Plugin/main/install-gemini.sh | bash
+```
+
+### One-Command Installers (curl)
+
+Use these from the target project directory.
+
+#### Gemini CLI
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/shafty023/MemLayer-Plugin/main/install-gemini.sh | bash
+```
+
+This installs the Gemini plugin and configures `memlayer` MCP in `.gemini/settings.json`.  
+Then run `/mcp auth memlayer` in Gemini to complete MCP login.
+By default, installer checkout ref is `memlayer` (override with `MEMLAYER_REPO_REF`).
+
+#### Claude Code
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/shafty023/MemLayer-Plugin/main/install-claude.sh | bash
+```
+
+This adds the plugin marketplace, installs `memory@ProcIQ`, and configures the `memlayer` MCP server in Claude.
+
+#### Codex CLI
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/shafty023/MemLayer-Plugin/main/install-codex.sh | bash
+```
+
+This installs the Codex plugin files, configures MCP, and immediately runs `codex mcp login memlayer`.
+By default, installer checkout ref is `memlayer` (override with `MEMLAYER_REPO_REF`).
+
 ### Claude Code
 
 1. Add the marketplace to Claude Code:
