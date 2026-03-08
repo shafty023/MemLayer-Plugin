@@ -1,34 +1,16 @@
 # MemLayer Codex Instructions
 
-## Default Behavior
+## Memory Policy
 
-- For every non-trivial user task, use the `memory-usage` skill before implementation and follow its Retrieve -> Act -> Log workflow.
-- For all coding, debugging, refactoring, test-fix, and architecture tasks, your FIRST action must be `prociq_retrieve_context` before any other tool call or code change.
-- Only skip this first-step requirement when the task is purely conversational and no execution is requested.
-- At the start of EVERY new Codex session, perform a memory bootstrap by calling `prociq_retrieve_context` before handling the first substantive user request.
+- Use the `memory-usage` skill for every non-trivial task.
+- At the start of every Codex session, call `prociq_retrieve_context` before the first substantive task.
+- For coding, debugging, refactoring, test-fix, and architecture work, `prociq_retrieve_context` must be the first non-trivial action.
+- Resolve the default scope after the first retrieval and before any scoped memory write. Ask the user only when multiple scopes are authorized and no default is already clear from context.
+- When a command, build, or test fails, stop, log the failure, retrieve context for the error, then retry.
+- At task end, log the outcome for the task.
+- Skip the memory workflow only for purely conversational requests with no execution.
+- If the `memory-usage` skill or ProcIQ tools are unavailable, state that limitation and continue with best-effort execution.
 
-## Startup Bootstrap (Aggressive)
+## Source Of Truth
 
-1. Immediately activate `memory-usage` for the session.
-2. Call `prociq_retrieve_context` with `task_description` set to a session bootstrap summary (recent work, active risks, and reusable patterns).
-3. If ProcIQ tools are unavailable, explicitly state this limitation before proceeding.
-4. On the first non-trivial user task, run `prociq_retrieve_context` again with the concrete task description.
-
-## Required Memory Sequence
-
-1. At task start, call `prociq_retrieve_context` with a concise task description.
-2. During debugging, call `prociq_retrieve_context` again with the current `error_state`.
-3. At task end, call `prociq_log_episode` with outcome and approach details.
-
-## Failure Rule
-
-- If any command, build, or test fails, log a failure episode with `prociq_log_episode` before retrying.
-
-## Logging Policy
-
-- Log success only for reusable, non-obvious work.
-- Skip logging for trivial/mechanical changes.
-
-## Missing Dependency Fallback
-
-- If `memory-usage` skill or ProcIQ MCP tools are unavailable, explicitly state that limitation and continue with best-effort execution.
+The detailed Retrieve -> Act -> Log workflow lives in the globally installed `memory-usage` skill.
