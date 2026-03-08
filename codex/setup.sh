@@ -4,10 +4,16 @@
 set -euo pipefail
 
 PLUGIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SKILL_SRC="${PLUGIN_DIR}/skills/memory-usage"
+LOCAL_SKILL_SRC="${PLUGIN_DIR}/skills/memory-usage"
+SHARED_SKILL_SRC="${PLUGIN_DIR}/../plugins/memory/skills/memory-usage"
+if [ -d "${SHARED_SKILL_SRC}" ]; then
+    SKILL_SRC="${SHARED_SKILL_SRC}"
+else
+    SKILL_SRC="${LOCAL_SKILL_SRC}"
+fi
 AGENTS_TEMPLATE="${PLUGIN_DIR}/templates/AGENTS.md"
 PROJECT_ROOT="$(pwd)"
-CODEX_HOME_DIR="${PROJECT_ROOT}/.codex"
+CODEX_HOME_DIR="${CODEX_HOME:-${HOME}/.codex}"
 TARGET_DIR="${CODEX_HOME_DIR}/skills/memory-usage"
 PROJECT_AGENTS_FILE="${PROJECT_ROOT}/AGENTS.md"
 
@@ -15,15 +21,16 @@ STARTUP_MARKER_BEGIN="# >>> MemLayer startup block >>>"
 STARTUP_MARKER_END="# <<< MemLayer startup block <<<"
 STARTUP_BLOCK="${STARTUP_MARKER_BEGIN}
 
-## MemLayer Startup Enforcement
+## MemLayer Memory Policy
 
-- For every non-trivial user task, use the \`memory-usage\` skill before implementation and follow its Retrieve -> Act -> Log workflow.
-- At the start of EVERY Codex session, call \`prociq_retrieve_context\` for a session bootstrap before the first substantive task.
-- For coding, debugging, refactoring, test-fix, and architecture tasks, first call \`prociq_retrieve_context\` with the concrete task details.
-- Immediately after first retrieval, call \`prociq_list_scopes\` to resolve default scope.
-- If more than one scope is authorized, ask the user to choose the default scope before any scoped memory write or logging operation.
-- At task end, call \`prociq_log_episode\` with outcome and approach details.
-- On command/test/build failure, log a failure episode before retrying.
+- Use the \`memory-usage\` skill for every non-trivial task.
+- At the start of every Codex session, call \`prociq_retrieve_context\` before the first substantive task.
+- For coding, debugging, refactoring, test-fix, and architecture work, \`prociq_retrieve_context\` must be the first non-trivial action.
+- Resolve the default scope after the first retrieval and before any scoped memory write. Ask the user only when multiple scopes are authorized and no default is already clear from context.
+- When a command, build, or test fails, stop, log the failure, retrieve context for the error, then retry.
+- At task end, log the outcome for the task.
+- If the \`memory-usage\` skill or ProcIQ tools are unavailable, state that limitation and continue with best-effort execution.
+- The detailed Retrieve -> Act -> Log workflow lives in the globally installed \`memory-usage\` skill.
 
 ${STARTUP_MARKER_END}"
 
@@ -88,12 +95,13 @@ mkdir -p "${CODEX_HOME_DIR}"
 
 if [ ! -f "${PROJECT_AGENTS_FILE}" ]; then
     cp "${AGENTS_TEMPLATE}" "${PROJECT_AGENTS_FILE}"
+else
+    upsert_startup_block "${PROJECT_AGENTS_FILE}"
 fi
-upsert_startup_block "${PROJECT_AGENTS_FILE}"
 
 echo "Done."
 echo ""
 echo "Next steps:"
-echo "1. Configure the ProcIQ MCP server in ${PROJECT_ROOT}/.codex/config.toml"
+echo "1. Configure the ProcIQ MCP server in ${CODEX_HOME_DIR}/config.toml"
 echo "2. Restart Codex so the new skill is discovered"
-echo "3. Startup memory enforcement installed in ${PROJECT_AGENTS_FILE}"
+echo "3. MemLayer policy installed or updated in ${PROJECT_AGENTS_FILE}"

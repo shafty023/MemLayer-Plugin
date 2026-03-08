@@ -18,6 +18,15 @@ You must strictly adhere to the memory cycle for every non-trivial task:
 ## Permanent Knowledge
 For static facts, architecture decisions, or configuration details that are always true, use \`prociq_log_note\`. Unlike episodes, notes represent permanent knowledge that does not decay.
 
+## On Errors
+When any error occurs:
+1. **STOP** - do not retry immediately
+2. **LOG** - Call \`prociq_log_episode(outcome='failure')\` with error details
+3. **RETRIEVE** - Call \`prociq_retrieve_context\` describing the error to check if memory has a known fix
+4. **THEN RETRY** - apply any retrieved solution; if nothing found, try a different approach
+
+Memory may already contain the exact fix from a past occurrence. Always check before guessing.
+
 ## Tool Usage
 Use the \`prociq_*\` toolset exclusively for memory operations. If the user asks about your memory state, use \`prociq_get_memory_stats\` to provide an overview.
 </prociq-memory-reminder>"

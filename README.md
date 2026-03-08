@@ -15,17 +15,6 @@ MemLayer provides your AI agents with episodic memory capabilities, allowing the
 
 ## Installation
 
-### Browser Copy/Paste One-Liners
-
-```bash
-# Codex
-curl -fsSL https://raw.githubusercontent.com/shafty023/MemLayer-Plugin/main/install-codex.sh | bash
-# Claude
-curl -fsSL https://raw.githubusercontent.com/shafty023/MemLayer-Plugin/main/install-claude.sh | bash
-# Gemini
-curl -fsSL https://raw.githubusercontent.com/shafty023/MemLayer-Plugin/main/install-gemini.sh | bash
-```
-
 ### One-Command Installers (curl)
 
 Use these from the target project directory.
@@ -38,7 +27,7 @@ curl -fsSL https://raw.githubusercontent.com/shafty023/MemLayer-Plugin/main/inst
 
 This installs the Gemini plugin and configures `memlayer` MCP in `.gemini/settings.json`.  
 Then run `/mcp auth memlayer` in Gemini to complete MCP login.
-By default, installer checkout ref is `memlayer` (override with `MEMLAYER_REPO_REF`).
+By default, installer checkout ref is `main` (override with `MEMLAYER_REPO_REF`).
 
 #### Claude Code
 
@@ -54,8 +43,8 @@ This adds the plugin marketplace, installs `memory@ProcIQ`, and configures the `
 curl -fsSL https://raw.githubusercontent.com/shafty023/MemLayer-Plugin/main/install-codex.sh | bash
 ```
 
-This installs the Codex plugin files, configures MCP, and immediately runs `codex mcp login memlayer`.
-By default, installer checkout ref is `memlayer` (override with `MEMLAYER_REPO_REF`).
+This installs the `memory-usage` skill into `${CODEX_HOME:-~/.codex}/skills`, updates the current repo's `AGENTS.md`, configures MCP, and prints the `codex mcp login memlayer` step for you to run explicitly.
+By default, installer checkout ref is `main` (override with `MEMLAYER_REPO_REF`).
 
 ### Claude Code
 
@@ -86,15 +75,14 @@ See the [Codex Plugin Documentation](codex/README.md) for installation and setup
 ```
 MemLayer-Plugin/
 ├── .claude-plugin/           # Claude marketplace registration
-├── codex/                    # Codex CLI plugin
+├── codex/                    # Codex CLI installer and policy template
 │   ├── setup.sh
-│   └── skills/
-├── gemini/                   # Gemini CLI plugin
+│   └── templates/
+├── gemini/                   # Gemini CLI installer and manifest
 │   ├── manifest.json
-│   ├── setup.sh
-│   └── skills/
+│   └── setup.sh
 └── plugins/
-    └── memory/               # Claude Code plugin
+    └── memory/               # Claude Code plugin and shared skill source
         ├── .claude-plugin/
         │   └── plugin.json   # Plugin manifest
         ├── commands/         # CLI commands
@@ -108,7 +96,7 @@ MemLayer-Plugin/
         │       └── user-prompt.sh
         └── skills/
             └── memory-usage/
-                └── SKILL.md  # Memory system usage guide
+                └── SKILL.md  # Canonical memory system usage guide
 ```
 
 ## Commands

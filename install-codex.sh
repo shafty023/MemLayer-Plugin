@@ -3,7 +3,7 @@
 set -euo pipefail
 
 REPO_SLUG="${MEMLAYER_REPO_SLUG:-shafty023/MemLayer-Plugin}"
-REPO_REF="${MEMLAYER_REPO_REF:-memlayer}"
+REPO_REF="${MEMLAYER_REPO_REF:-main}"
 MCP_URL="${MEMLAYER_MCP_URL:-https://prociq.ai/mcp}"
 TARGET_DIR="${1:-${MEMLAYER_TARGET_DIR:-$PWD}}"
 SERVER_NAME="${MEMLAYER_SERVER_NAME:-memlayer}"
@@ -30,7 +30,7 @@ cleanup() {
 trap cleanup EXIT
 
 repo_url="https://github.com/${REPO_SLUG}.git"
-plugin_dir="${tmp_dir}/MemLayer-Plugin"
+plugin_dir="${tmp_dir}/plugin"
 
 echo "Cloning ${repo_url}..."
 git clone --depth 1 --branch "${REPO_REF}" "${repo_url}" "${plugin_dir}"
@@ -40,7 +40,7 @@ if [ ! -d "${plugin_dir}/codex" ]; then
   exit 1
 fi
 
-echo "Installing Codex skill files into ${TARGET_DIR}..."
+echo "Installing the global Codex skill and updating repo policy in ${TARGET_DIR}..."
 (
   cd "${TARGET_DIR}"
   bash "${plugin_dir}/codex/setup.sh"
@@ -53,7 +53,5 @@ else
   codex mcp add "${SERVER_NAME}" --url "${MCP_URL}"
 fi
 
-echo "Triggering OAuth login..."
-codex mcp login "${SERVER_NAME}"
-
-echo "Done. MemLayer is installed for Codex in ${TARGET_DIR}."
+echo "Done. MemLayer is installed for Codex and configured for ${TARGET_DIR}."
+echo "Next step: run 'codex mcp login ${SERVER_NAME}' to authenticate."

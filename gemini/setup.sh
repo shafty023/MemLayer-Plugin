@@ -4,7 +4,13 @@
 set -e
 
 PLUGIN_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SKILL_SRC="${PLUGIN_DIR}/skills/memory-usage"
+LOCAL_SKILL_SRC="${PLUGIN_DIR}/skills/memory-usage"
+SHARED_SKILL_SRC="${PLUGIN_DIR}/../plugins/memory/skills/memory-usage"
+if [ -d "${SHARED_SKILL_SRC}" ]; then
+    SKILL_SRC="${SHARED_SKILL_SRC}"
+else
+    SKILL_SRC="${LOCAL_SKILL_SRC}"
+fi
 
 echo "Installing ProcIQ Gemini Plugin skills to workspace..."
 

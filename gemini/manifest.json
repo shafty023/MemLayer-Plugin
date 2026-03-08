@@ -6,7 +6,7 @@
   "skills": [
     {
       "name": "memory-usage",
-      "path": "skills/memory-usage/SKILL.md",
+      "path": "../plugins/memory/skills/memory-usage/SKILL.md",
       "description": "Orchestrates the Retrieve-Act-Log cycle for persistent agent learning."
     }
   ],

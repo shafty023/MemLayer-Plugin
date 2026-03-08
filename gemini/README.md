@@ -17,7 +17,7 @@ Run the provided setup script from your project's root directory to install the 
 /path/to/MemLayer-Plugin/gemini/setup.sh
 ```
 
-This will install the `memory-usage` skill to your local workspace scope (`.gemini/skills/memory-usage`). Installing to the workspace is the recommended way to bypass Gemini CLI sandboxing restrictions that might prevent access to global skills.
+This will install the `memory-usage` skill to your local workspace scope (`.gemini/skills/memory-usage`) from the canonical source at `plugins/memory/skills/memory-usage`. Installing to the workspace is the recommended way to bypass Gemini CLI sandboxing restrictions that might prevent access to global skills.
 
 ### 2. Configure MCP Server
 The plugin requires the `prociq` MCP server to be configured. Add the following to your project-local `.gemini/settings.json` (creating it if it doesn't exist):
@@ -63,6 +63,6 @@ You can also manually interact with the memory using the ProcIQ tools:
 *   `prociq_search_episodes`: Search through your history with custom filters.
 
 ## Plugin Development
-*   **Skills**: Defined in `skills/`. The logic for the memory lifecycle is in `skills/memory-usage/SKILL.md`.
+*   **Skills**: The canonical skill source is `../plugins/memory/skills/memory-usage/SKILL.md`.
 *   **System Prompts**: Top-level instructions are in `prompts/system.md`.
 *   **Manifest**: Metadata and skill declarations are in `manifest.json`.
