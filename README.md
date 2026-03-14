@@ -46,6 +46,14 @@ curl -fsSL https://raw.githubusercontent.com/shafty023/MemLayer-Plugin/main/inst
 This installs the `memory-usage` skill into `${CODEX_HOME:-~/.codex}/skills`, updates the current repo's `AGENTS.md`, configures MCP, and prints the `codex mcp login memlayer` step for you to run explicitly.
 By default, installer checkout ref is `main` (override with `MEMLAYER_REPO_REF`).
 
+For enforced memory behavior on every run, launch Codex through:
+
+```bash
+/path/to/MemLayer-Plugin/codex/codex-mem.sh [codex args...]
+```
+
+This wrapper bootstraps missing MemLayer setup, prints preflight requirements, and performs a post-run check for `prociq_log_episode`.
+
 ### Claude Code
 
 1. Add the marketplace to Claude Code:
@@ -76,6 +84,7 @@ See the [Codex Plugin Documentation](codex/README.md) for installation and setup
 MemLayer-Plugin/
 ├── .claude-plugin/           # Claude marketplace registration
 ├── codex/                    # Codex CLI installer and policy template
+│   ├── codex-mem.sh
 │   ├── setup.sh
 │   └── templates/
 ├── gemini/                   # Gemini CLI installer and manifest

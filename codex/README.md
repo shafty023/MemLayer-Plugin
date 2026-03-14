@@ -41,6 +41,34 @@ The detailed ProcIQ behavior stays in the globally installed `memory-usage` skil
 
 If the target already has an `AGENTS.md`, rerun with `--force` as the second argument to overwrite.
 
+### 4. Use The Guarded Launcher (`codex-mem`)
+
+To enforce MemLayer checks before every Codex run in this repository, use:
+
+```bash
+/path/to/MemLayer-Plugin/codex/codex-mem.sh [codex args...]
+```
+
+What this launcher does:
+
+- verifies `${CODEX_HOME:-~/.codex}/skills/memory-usage` exists
+- verifies this repo's `AGENTS.md` contains the MemLayer startup block
+- verifies `codex mcp get memlayer` is configured
+- auto-runs local setup (`codex/setup.sh`) and `codex mcp add memlayer` when needed
+- prints a mandatory preflight checklist (retrieve context, list scopes, resolve default scope)
+- checks recent Codex session logs for `prociq_log_episode` usage after the run
+
+Compliance behavior:
+
+- non-trivial runs without `prociq_log_episode` produce a warning
+- in strict/non-interactive mode, missing episode logs fail with exit code `42`
+- non-zero Codex exits print a failure-logging reminder
+
+Useful toggles:
+
+- `CODEX_MEM_NON_TRIVIAL=0` to skip post-run logging enforcement for trivial runs
+- `CODEX_MEM_STRICT=1` to fail on missing post-run episode logs even in interactive runs
+
 ## Usage
 
 Once installed via `codex mcp add`, Codex can use MemLayer through MCP. The intended layering is:
@@ -69,3 +97,4 @@ Explicit skill or command-style prompts are still fine when you want them, for e
 - Installer: `codex/setup.sh`
 - AGENTS template: `codex/templates/AGENTS.md`
 - AGENTS installer: `codex/install-agents.sh`
+- Guard wrapper: `codex/codex-mem.sh`
