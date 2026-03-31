@@ -43,7 +43,7 @@ This adds the plugin marketplace, installs `memory@ProcIQ`, and configures the `
 curl -fsSL https://raw.githubusercontent.com/shafty023/MemLayer-Plugin/main/install-codex.sh | bash
 ```
 
-This installs the `memory-usage` skill into `${CODEX_HOME:-~/.codex}/skills`, updates the current repo's `AGENTS.md`, configures MCP, and prints the `codex mcp login memlayer` step for you to run explicitly.
+This installs the `memory-usage` skill into the current repo at `.agents/skills/memory-usage`, installs Codex repo hooks under `.codex/`, enables Codex hook support in `${CODEX_HOME:-~/.codex}/config.toml`, updates the current repo's `AGENTS.md`, configures MCP, and prints the `codex mcp login memlayer` step for you to run explicitly.
 By default, installer checkout ref is `main` (override with `MEMLAYER_REPO_REF`).
 
 ### Claude Code

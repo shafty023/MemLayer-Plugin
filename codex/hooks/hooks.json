@@ -1,0 +1,27 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "__SESSION_START_HOOK__",
+            "statusMessage": "Loading MemLayer session guidance"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "__USER_PROMPT_HOOK__",
+            "statusMessage": "Applying MemLayer task guidance"
+          }
+        ]
+      }
+    ]
+  }
+}

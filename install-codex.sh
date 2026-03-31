@@ -40,7 +40,7 @@ if [ ! -d "${plugin_dir}/codex" ]; then
   exit 1
 fi
 
-echo "Installing the global Codex skill and updating repo policy in ${TARGET_DIR}..."
+echo "Installing the repo-scoped Codex skill and updating repo policy in ${TARGET_DIR}..."
 (
   cd "${TARGET_DIR}"
   bash "${plugin_dir}/codex/setup.sh"
@@ -53,5 +53,5 @@ else
   codex mcp add "${SERVER_NAME}" --url "${MCP_URL}"
 fi
 
-echo "Done. MemLayer is installed for Codex and configured for ${TARGET_DIR}."
+echo "Done. MemLayer is installed for Codex in ${TARGET_DIR}/.agents/skills and configured for ${TARGET_DIR}."
 echo "Next step: run 'codex mcp login ${SERVER_NAME}' to authenticate."

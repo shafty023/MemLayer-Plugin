@@ -1,6 +1,6 @@
 # ProcIQ Memory Layer - Codex Plugin
 
-A self-learning memory layer for Codex. This plugin installs a reusable skill for the detailed ProcIQ workflow and a lightweight `AGENTS.md` policy that tells Codex when to use it.
+A self-learning memory layer for Codex. This plugin installs a repo-scoped skill, repo-local hooks, and a lightweight `AGENTS.md` policy so Codex follows the MemLayer workflow consistently.
 
 ## Prerequisites
 
@@ -17,19 +17,19 @@ The recommended way to install MemLayer in Codex is using the built-in MCP comma
 codex mcp add memlayer --url "https://prociq.ai/mcp"
 ```
 
-### 2. Install Global Skill And Project Policy
-To install the `memory-usage` skill into your Codex home directory and apply the MemLayer repo policy from your project root, run:
+### 2. Install Repo Skill, Hooks, And Project Policy
+To install the `memory-usage` skill into the current repository and apply the MemLayer repo policy from your project root, run:
 
 ```bash
 /path/to/MemLayer-Plugin/codex/setup.sh
 ```
 
-This installs the `memory-usage` skill into `${CODEX_HOME:-~/.codex}/skills` from the canonical source at `plugins/memory/skills/memory-usage` and then:
+This installs the `memory-usage` skill into `.agents/skills/memory-usage`, installs Codex hooks into `.codex/hooks.json` and `.codex/hooks/`, enables the `codex_hooks` feature in `${CODEX_HOME:-~/.codex}/config.toml`, and then:
 
 - creates a minimal `AGENTS.md` if the project does not already have one
 - updates the MemLayer startup block inside an existing `AGENTS.md` if one is already present
 
-The detailed ProcIQ behavior stays in the globally installed `memory-usage` skill so the repo policy can stay short and avoid duplicated instructions.
+The detailed ProcIQ behavior stays in the repo-installed `memory-usage` skill. The repo-local hooks mirror the existing Gemini and Claude integration pattern with `SessionStart` and `UserPromptSubmit`, while `AGENTS.md` keeps the minimal enforcement rules that should remain repo-local.
 
 ### 3. Install AGENTS.md In A Target Project
 
@@ -45,11 +45,12 @@ If the target already has an `AGENTS.md`, rerun with `--force` as the second arg
 
 Once installed via `codex mcp add`, Codex can use MemLayer through MCP. The intended layering is:
 
-1. `${CODEX_HOME:-~/.codex}/skills/memory-usage` provides the reusable global skill.
-2. `AGENTS.md` enforces when memory should be used in this repository.
-3. The ProcIQ MCP server provides the actual memory tools.
+1. `.agents/skills/memory-usage` provides the reusable repo skill.
+2. `.codex/hooks.json` plus `.codex/hooks/` reinforces the memory workflow on `SessionStart` and `UserPromptSubmit`.
+3. `AGENTS.md` enforces when memory should be used in this repository.
+4. The ProcIQ MCP server provides the actual memory tools.
 
-By default, this installer does not modify `${CODEX_HOME:-~/.codex}/AGENTS.md`, because global AGENTS instructions affect every repository you open in Codex.
+This installer scopes the MemLayer skill to the current repository rather than writing into your personal Codex skill directory.
 
 You can then work naturally, for example:
 
@@ -66,6 +67,10 @@ Explicit skill or command-style prompts are still fine when you want them, for e
 ## Plugin Development
 
 - Canonical skill definition: `plugins/memory/skills/memory-usage/SKILL.md`
+- Shared hook script source: `plugins/memory/hooks/scripts/`
+- Repo install location: `.agents/skills/memory-usage`
+- Repo hook config: `.codex/hooks.json`
+- Repo hook scripts: `.codex/hooks/`
 - Installer: `codex/setup.sh`
 - AGENTS template: `codex/templates/AGENTS.md`
 - AGENTS installer: `codex/install-agents.sh`
