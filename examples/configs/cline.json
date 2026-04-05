@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "memlayer": {
+      "url": "https://prociq.ai/mcp",
+      "type": "streamableHttp",
+      "oauth": {
+        "enabled": true
+      },
+      "disabled": false
+    }
+  }
+}

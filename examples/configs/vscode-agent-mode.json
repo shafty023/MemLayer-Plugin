@@ -1,0 +1,11 @@
+{
+  "servers": {
+    "memlayer": {
+      "type": "http",
+      "url": "https://prociq.ai/mcp",
+      "oauth": {
+        "enabled": true
+      }
+    }
+  }
+}
