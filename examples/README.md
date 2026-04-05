@@ -14,6 +14,14 @@ Ready-to-use MCP configuration files for every supported client:
 - Cline
 - VS Code Agent Mode
 
+### [Integration Examples](integrations/)
+
+Working code samples for popular agent frameworks:
+
+- Python MCP SDK — Direct MCP client connection
+- Claude Agent SDK — TypeScript agent with persistent learning
+- LangChain MCP Adapter — MemLayer tools inside a ReAct agent
+
 ### [Quickstart](quickstart/)
 
 Minimal example demonstrating the complete MemLayer learning loop:
@@ -26,8 +34,9 @@ Minimal example demonstrating the complete MemLayer learning loop:
 ## Getting Started
 
 1. Copy the [config template](configs/) for your AI coding tool
-2. Follow the [quickstart](quickstart/) to run your first learning loop
-3. Read the [full documentation](https://prociq.ai/docs/introduction) for deeper coverage
+2. Try an [integration example](integrations/) for your framework
+3. Follow the [quickstart](quickstart/) to understand the learning loop
+4. Read the [full documentation](https://prociq.ai/docs/introduction) for deeper coverage
 
 ## Links
 
